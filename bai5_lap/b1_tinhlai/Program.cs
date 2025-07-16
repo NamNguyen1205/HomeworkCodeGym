@@ -17,7 +17,7 @@
         double tongLai = 0;
         for (int i = 0; i < month; i++)
         {
-            tongLai = money * (interest_rate / 100) / 12 * 3;
+            tongLai = money * (interest_rate / 100) / 12 * month;
         }
         Console.WriteLine("tong lai la: " + tongLai);
     }
