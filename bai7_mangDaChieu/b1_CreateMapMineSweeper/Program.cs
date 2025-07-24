@@ -1,77 +1,73 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace mineText
+﻿
+public class Program
 {
-    class Program
+    public static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            string[,] map = {
+        string[,] map = {
             {"*", ".", ".", "."},
             {".", ".", ".", "."},
             {".", "*", ".", "."},
             {".", ".", ".", "."}
         };
-            int MAP_HEIGHT = map.GetLength(0);
-            int MAP_WIDTH = map.GetLength(1);
+        int row = map.GetLength(0);
+        int col = map.GetLength(1);
+        string[,] mapResult = new string[row, col];
 
-            string[,] mapReport = new string[MAP_HEIGHT, MAP_WIDTH];
-            for (int yOrdinate = 0; yOrdinate < MAP_HEIGHT; yOrdinate++)
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < col; j++)
             {
-                for (int xOrdinate = 0; xOrdinate < map.GetLength(0); xOrdinate++)
+                if (map[i, j] == "*")
                 {
-                    string curentCell = map[yOrdinate, xOrdinate];
-                    if (curentCell.Equals("*"))
-                    {
-                        mapReport[yOrdinate, xOrdinate] = "*";
-                    }
-                    else
-                    {
-                        int[,] NEIGHBOURS_ORDINATE = {
-                        {yOrdinate - 1, xOrdinate - 1}, {yOrdinate - 1, xOrdinate}, {yOrdinate - 1, xOrdinate + 1},
-                        {yOrdinate, xOrdinate - 1}, {yOrdinate, xOrdinate + 1},
-                        {yOrdinate + 1, xOrdinate - 1}, {yOrdinate + 1, xOrdinate}, {yOrdinate + 1, xOrdinate + 1},};
+                    mapResult[i, j] = "*";
+                }
+                else
+                {
 
-                        int minesAround = 0;
-                        int length = NEIGHBOURS_ORDINATE.GetLength(0);
-                        for (int i = 0; i < length; i++)
+                    int[,] neighboringMines = {
+                        {i - 1, j - 1},
+                        { i - 1, j},
+                        { i - 1, j + 1},
+                        {i, j - 1},
+                        { i, j + 1},
+                        {i + 1, j - 1},
+                        { i + 1, j},
+                        { i + 1, j + 1}
+                    };
+                    int dem = 0;
+
+                    for (int k = 0; k < neighboringMines.GetLength(0); k++)
+                    {
+                        int neighborRow = neighboringMines[k, 0];//giá trị i
+                        int neighborCol = neighboringMines[k, 1];//giá trị j
+                        // Kiểm tra xem hàng xóm có nằm trong phạm vi của ma trận không
+                        // các Th ko là hàng xóm: i-1 mà min -> i-1 < 0, i+1 mà max -> i+1 == row || i+1 >= row
+                        bool isNotNeighbor = neighborRow < 0 || neighborRow == row ||
+                                             neighborCol < 0 || neighborCol == col;
+                        if (isNotNeighbor)
                         {
-                            int xOrdinateOfNeighbour = NEIGHBOURS_ORDINATE[i, 1];
-                            int yOrdinateOfNeighbour = NEIGHBOURS_ORDINATE[i, 0];
-
-                            bool isOutOfMapNeighbour = xOrdinateOfNeighbour < 0
-                                    || xOrdinateOfNeighbour == MAP_WIDTH
-                                    || yOrdinateOfNeighbour < 0
-                                    || yOrdinateOfNeighbour == MAP_HEIGHT;
-                            if (isOutOfMapNeighbour)
-                            {
-                                continue;
-                            }
-
-                            bool isMineOwnerNeighbour = map[yOrdinateOfNeighbour, xOrdinateOfNeighbour].Equals("*");
-                            if (isMineOwnerNeighbour)
-                            {
-                                minesAround++;
-                            }
+                            continue; //ko phải là hàng xóm thì bỏ qa vòng for hiện tại
                         }
-
-                        mapReport[yOrdinate, xOrdinate] = minesAround.ToString();
+                        if (map[neighborRow, neighborCol] == "*")
+                        {
+                            dem++; // Tăng biến đếm nếu hàng xóm là mìn
+                        }
                     }
-                }
-            }
+                    mapResult[i, j] = dem.ToString();
 
-            for (int yOrdinate = 0; yOrdinate < MAP_HEIGHT; yOrdinate++)
-            {
-                Console.WriteLine("\n");
-                for (int xOrdinate = 0; xOrdinate < MAP_WIDTH; xOrdinate++)
-                {
-                    String currentCellReport = mapReport[yOrdinate, xOrdinate];
-                    Console.Write(currentCellReport);
                 }
             }
-            Console.ReadLine();
+            Console.WriteLine();
+        }
+
+        // In ra map kết quả
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < col; j++)
+            {
+                Console.Write(mapResult[i, j] + " ");
+            }
+            Console.WriteLine();
         }
     }
 }
